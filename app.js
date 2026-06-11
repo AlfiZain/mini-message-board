@@ -1,5 +1,6 @@
 const path = require('node:path');
 const express = require('express');
+const NotFoundError = require('./errors/NotFoundError');
 
 const app = express();
 const PORT = 8080;
@@ -56,11 +57,21 @@ app.get('/messages/:username', (req, res) => {
   const username = req.params.username;
   const userMessage = messages.find((message) => message.user === username);
 
+  if (!userMessage) throw new NotFoundError('User Not Found');
+
   res.render('detail-message', {
     title: `Message From ${userMessage.user}`,
     userMessage: userMessage,
     links: links,
   });
+});
+
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  res
+    .status(err.statusCode || 500)
+    .send(err.message || 'Internal Server Error');
 });
 
 app.listen(PORT, () => {
