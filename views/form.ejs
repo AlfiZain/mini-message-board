@@ -11,11 +11,12 @@
     </header>
     <main>
       <h1>Add new message</h1>
-      <form method="post" action="/new">
+      <%- include("partials/errors.ejs") %>
+      <form method="post" action="/messages/new" style="display: flex; flex-direction: column; gap: 1rem;">
         <label for="user">Username</label>
-        <input type="text" id="user" name="user" />
+        <input type="text" id="user" name="user" minlength="1" maxlength="12" required/>
         <label for="text">Message</label>
-        <input type="text" id="text" name="text" />
+        <textarea name="text" id="text" minlength="1" maxlength="220" rows="5" required ></textarea>
         <button>Send your message</button>
       </form>
     </main>

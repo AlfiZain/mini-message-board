@@ -1,6 +1,6 @@
 const path = require('node:path');
 const express = require('express');
-const NotFoundError = require('./errors/NotFoundError');
+const messagesController = require('./controllers/messagesController');
 
 const app = express();
 const PORT = 8080;
@@ -12,7 +12,7 @@ const links = [
   },
   {
     name: 'new message',
-    href: '/new',
+    href: '/messages/new',
   },
 ];
 
@@ -33,38 +33,24 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(express.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+  res.locals.links = links;
+  res.locals.messages = messages;
+  next();
+});
 
 app.get('/', (req, res) => {
   res.render('index', {
-    title: 'Mini Messageboard',
+    title: 'Mini Message board',
     messages: messages,
-    links: links,
   });
 });
 
-app.get('/new', (req, res) => {
-  res.render('form', { title: 'Add new message', links: links });
-});
+app.get('/messages/new', messagesController.messagesNewGet);
 
-app.post('/new', (req, res) => {
-  const { user, text } = req.body;
+app.post('/messages/new', messagesController.messagesNewPost);
 
-  messages.push({ text, user, added: new Date() });
-  res.redirect('/');
-});
-
-app.get('/messages/:username', (req, res) => {
-  const username = req.params.username;
-  const userMessage = messages.find((message) => message.user === username);
-
-  if (!userMessage) throw new NotFoundError('User Not Found');
-
-  res.render('detail-message', {
-    title: `Message From ${userMessage.user}`,
-    userMessage: userMessage,
-    links: links,
-  });
-});
+app.get('/messages/:username', messagesController.messagesDetailGet);
 
 app.use((err, req, res, next) => {
   console.error(err);
