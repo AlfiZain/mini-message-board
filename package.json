@@ -4,7 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed:prod": "node db/populatedb.js"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +14,7 @@
   "dependencies": {
     "ejs": "^6.0.1",
     "express": "^5.2.1",
-    "express-validator": "^7.3.2"
+    "express-validator": "^7.3.2",
+    "pg": "^8.21.0"
   }
 }

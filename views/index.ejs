@@ -12,10 +12,10 @@
     <main>
         <% messages.forEach((message) => { %>
             <div style="border: 1px solid black; margin-bottom: 1rem; padding: 1rem;">
-                <p><%= message.user%></p>
+                <p><%= message.username%></p>
                 <p><%= message.text%></p>
                 <p><%= message.added%></p>
-                <a href="/messages/<%= message.user %>">See Detail</a>
+                <a href="/messages/<%= message.username %>">See Detail</a>
             </div>
         <%}); %>
     </main>

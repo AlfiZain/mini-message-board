@@ -1,8 +1,9 @@
 const { body, validationResult, matchedData } = require('express-validator');
 const NotFoundError = require('../errors/NotFoundError');
+const db = require('../db/queries');
 
 const validateMessage = [
-  body('user')
+  body('username')
     .trim()
     .notEmpty()
     .isLength({ min: 1, max: 12 })
@@ -20,7 +21,7 @@ exports.messagesNewGet = (req, res) => {
 
 exports.messagesNewPost = [
   validateMessage,
-  (req, res) => {
+  async (req, res) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -30,23 +31,23 @@ exports.messagesNewPost = [
       });
     }
 
-    const { user, text } = matchedData(req);
+    const { username, text } = matchedData(req);
+    await db.createMessage({ username, text });
 
-    res.locals.messages.push({ text, user, added: new Date() });
     res.redirect('/');
   },
 ];
 
-exports.messagesDetailGet = (req, res) => {
+exports.messagesDetailGet = async (req, res) => {
   const username = req.params.username;
-  const userMessage = res.locals.messages.find(
-    (message) => message.user === username,
-  );
+  const userMessages = await db.getMessagesByUsername(username);
 
-  if (!userMessage) throw new NotFoundError('User Not Found');
+  if (userMessages.length === 0) {
+    throw new NotFoundError('User Not Found');
+  }
 
   res.render('detail-message', {
-    title: `Message From ${userMessage.user}`,
-    userMessage: userMessage,
+    title: `Messages From ${username}`,
+    userMessages,
   });
 };

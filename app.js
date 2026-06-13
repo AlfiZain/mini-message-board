@@ -1,6 +1,7 @@
 const path = require('node:path');
 const express = require('express');
 const messagesController = require('./controllers/messagesController');
+const db = require('./db/queries');
 
 const app = express();
 const PORT = 8080;
@@ -16,33 +17,21 @@ const links = [
   },
 ];
 
-const messages = [
-  {
-    text: 'Hi there!',
-    user: 'Amando',
-    added: new Date(),
-  },
-  {
-    text: 'Hello World!',
-    user: 'Charles',
-    added: new Date(),
-  },
-];
-
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   res.locals.links = links;
-  res.locals.messages = messages;
   next();
 });
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
+  const messages = await db.getAllMessages();
+
   res.render('index', {
     title: 'Mini Message board',
-    messages: messages,
+    messages,
   });
 });
 

@@ -10,11 +10,14 @@
         <%- include("navbar", {links: links}) %>
     </header>
     <main>
-      <div>
-        <h1><%= userMessage.user %></h1>
-        <p>Created at: <%= userMessage.added %></p>
-        <p><%= userMessage.text %></p>
-      </div>
+      <h1>Messages from <%= userMessages[0].username %></h1>
+
+      <% userMessages.forEach(message => { %>
+        <div>
+          <p>Created at: <%= message.added %></p>
+          <p><%= message.text %></p>
+        </div>
+      <% }) %>
     </main>
   </body>
 </html>
